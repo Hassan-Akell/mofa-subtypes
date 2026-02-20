@@ -1,0 +1,17 @@
+name: mofa-subtypes
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - numpy
+  - scipy
+  - h5py
+  - pandas
+  - scikit-learn
+  - matplotlib
+  - jupyterlab
+  - ipykernel
+  - pip:
+      - mofapy2
+      - -e ".[dev]"
