@@ -1,0 +1,67 @@
+# mofa-subtypes
+
+A **MOFA / mofapy2** extension that implements the **DP-Cluster-MOFA** model described in *Subtypes_and_Pathways-5*:
+a **Dirichlet-process (truncated stick-breaking)** mixture prior on the **latent factors** `Z`, enabling **unsupervised subtype discovery**
+in the MOFA latent space.
+
+This repo is designed as an **extension package** (no vendoring of `mofapy2`), so you can keep it **private** during development.
+
+---
+
+## Install (dev)
+
+```bash
+# From the repo root
+python -m venv .venv
+source .venv/bin/activate
+
+pip install -U pip
+pip install -e ".[dev]"
+
+# If you want to track a specific mofapy2 commit:
+# pip install "mofapy2 @ git+https://github.com/bioFAM/mofapy2.git@<PIN_COMMIT>"
+```
+
+---
+
+## Quickstart
+
+```python
+from mofa_subtypes.entry_point import entry_point_subtypes
+
+ep = entry_point_subtypes()
+
+# Standard mofapy2 workflow:
+ep.set_data_matrix(data)                  # or set_data_df / set_data_from_anndata, etc.
+ep.set_model_options(factors=10, likelihoods=["gaussian"]*len(data))
+ep.set_train_options(iter=500, verbose=True)
+
+# New: subtype/DP options
+ep.set_subtypes_options(C=8)
+
+ep.build()
+ep.run()
+ep.save("mofa_subtypes_model.hdf5")
+```
+
+---
+
+## What’s implemented
+
+- New VI nodes:
+  - `Gamma` (DP concentration)
+  - `V` (stick-breaking variables)
+  - `C` (responsibilities)
+  - `MuLambda` (component Normal–Gamma parameters)
+  - `m0`, `t0` (base hyperparameters)
+  - `MuZ`, `AlphaZ` (deterministic per-(n,k) prior moments used by `Z` updates)
+- A custom builder that plugs these nodes into the **standard MOFA BayesNet**.
+- A small extension to saving: after the standard mofapy2 save, extra DP quantities are appended into the HDF5 file.
+
+---
+
+## Notes
+
+- Current implementation is **CAVI** (coordinate ascent). SVI hooks are left in place (step size `ro`) but you may want to refine
+  the stochastic/global updates once you finalize your SVI design in Subtypes_and_Pathways-5.
+- Spike-and-slab / ARD variants on `Z` are not enabled by default in this extension.
