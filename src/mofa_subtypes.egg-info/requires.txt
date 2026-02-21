@@ -1,0 +1,9 @@
+mofapy2
+numpy
+scipy
+h5py
+
+[dev]
+pytest
+ruff
+mypy

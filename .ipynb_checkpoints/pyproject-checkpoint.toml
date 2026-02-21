@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mofa-subtypes"
+version = "0.1.0"
+description = "DP-Cluster-MOFA extension: subtype discovery in MOFA latent space."
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [{name="Hassan Akell"}]
+dependencies = [
+  # Use PyPI if available; for exact reproducibility pin to a commit:
+  # "mofapy2 @ git+https://github.com/bioFAM/mofapy2.git@<PIN_COMMIT>",
+  "mofapy2",
+  "numpy",
+  "scipy",
+  "h5py",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "ruff", "mypy"]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
